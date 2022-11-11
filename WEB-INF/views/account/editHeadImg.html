@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上传头像</title>
+    <link rel="stylesheet" href="/resources/element-ui/lib/theme-chalk/index.css">
+    <script type="text/javascript" src="/resources/js/vue.js"></script>
+    <script type="text/javascript" src="/resources/element-ui/lib/index.js"></script>
+    <script type="text/javascript" src="/resources/js/axios.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <el-form>
+            <el-form-item>
+                <!--:auto-upload="false"不在选取文件之后，立即自动进行文件的上传-->
+                <!--:show-file-list="false"这个属性不展示上传的图片列表-->
+                <!--:on-change控制每个功能对应自己的上传文件，同时文件上传为手动上传-->
+                <!--:on-success使用按钮的方式提交文件，成功之后要执行对应的on-success的方法-->
+                <!--ref代表 控件-->
+                <el-upload
+                    id="headImg"
+                    name="headImg"
+                    action="/upload/uploadFile.do"
+                    accept=".jpg,.JPG,.JPEG,.png,.PNG,.gif,.GIF"
+                    :auto-upload="false"
+                    :show-file-list="false"
+                    :on-change="onChange"
+                    :on-success="onSuccess"
+                    ref="uploadImgRef"
+                    >
+                    <!--指定文件上传的区域-->
+                    <div style="width: 200px;height: 200px;" class="el-upload-dragger">
+                        <!--点击文件上传，选择要上传的图片之后，显示该图片-->
+                        <img v-if="imgUrl" :src="imgUrl" style="width: 200px;height: 200px;"/>
+                        <div v-else>
+                            <!--框里最上面的图标-->
+                            <i class="el-icon-upload"></i>
+                            <div class="el-upload__text">将文件拖拽到此处或<em>点击文件上传</em></div>
+                            <div class="el-upload__tip">文件上传大小不能超过1M</div>
+                        </div>
+                    </div>
+                </el-upload>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" icon="el-icon-upload" @click="uploadHeadImg">上传图像</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+    <!--引入自定义js-->
+    <script type="text/javascript" src="/resources/js/account/editHeadImg.js"></script>
+</body>
+</html>

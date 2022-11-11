@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>部门信息列表</title>
+    <!--引入element-ui-->
+    <link rel="stylesheet" href="/resources/element-ui/lib/theme-chalk/index.css">
+    <!--引入vue-->
+    <script type="text/javascript" src="/resources/js/vue.js"></script>
+    <script type="text/javascript" src="/resources/element-ui/lib/index.js"></script>
+    <!--引入axios-->
+    <script src="/resources/js/axios.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <el-row>
+            <el-col :span="4">
+                <!--round是否是圆角按钮-->
+                <el-button type="success" icon="el-icon-plus" round size="small" @click="openAddDeptWin">添加</el-button>
+            </el-col>
+        </el-row>
+        <div style="margin: 10px"></div>
+        <!--数据表格-->
+        <el-table :data="deptDataArray" border>
+            <el-table-column label="序号" width="200" align="center" type="index"></el-table-column>
+            <el-table-column label="主键" width="200" align="center" prop="id"></el-table-column>
+            <el-table-column label="部门名称" width="200" align="center" prop="name"></el-table-column>
+            <el-table-column label="部门地址" width="200" align="center" prop="loc"></el-table-column>
+        </el-table>
+        <!--分页-->
+        <el-pagination :total="total"
+                       :current-page="pageNum"
+                       :page-size="pageSize"
+                       :page-sizes="pageSizes"
+                       @current-change="currentChange"
+                       @size-change="sizeChange"
+                       background
+                       layout="total,sizes,prev,pager,next,jumper">
+        </el-pagination>
+        <!--添加部门窗口-->
+        <!--el-dialog用于 弹出框-->
+        <!--:visible指的是属性绑定，表示弹框的显示隐藏，当值为true时，弹框显示，当值为false时，弹框隐藏-->
+        <!--sync指的是同步动态双向表示visible的值，关闭窗口时，这个弹框就隐藏了，visible的值发生了改变，
+        但是关闭窗口的这个动作，没法用确定的动作去判断这个值，所以用到了vue中的双向绑定原则，
+        加上.sync表示同步的修改了visible的值-->
+        <el-dialog title="添加部门" :visible.sync="addDeptWinOpenStatus" @close="addDeptWinClose">
+            <!--ref 绑定控件-->
+            <!--model作用：主要是为了配合表单验证，配合el-form的rules和el-form-item的prop来一起使用-->
+            <!--rules存放数据校验的对象-->
+            <el-form ref="addDeptWinRef" :model="addDeptFormData" :rules="addDeptFormRules">
+                <el-form-item prop="name">
+                    <el-input v-model="addDeptFormData.name" prefix-icon="el-icon-location" placeholder="请输入部门名称"/>
+                </el-form-item>
+                <el-form-item prop="loc">
+                    <el-input v-model="addDeptFormData.loc" prefix-icon="el-icon-location" placeholder="请输入部门地址"/>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" icon="el-icon-check" @click="addDeptOk">确定</el-button>
+                    <el-button type="danger" icon="el-icon-close" @click="resetAddDeptWin">取消</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+    </div>
+    <!--引入自定义js-->
+    <script type="text/javascript" src="/resources/js/dept/getDepts.js"></script>
+</body>
+</html>

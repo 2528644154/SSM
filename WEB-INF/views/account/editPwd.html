@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改密码</title>
+    <link rel="stylesheet" href="/resources/element-ui/lib/theme-chalk/index.css">
+    <script type="text/javascript" src="/resources/js/vue.js"></script>
+    <script type="text/javascript" src="/resources/element-ui/lib/index.js"></script>
+    <script type="text/javascript" src="/resources/js/axios.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <el-form :rules="formRules" :model="formData" ref="formDataRef">
+            <el-form-item label="账号" label-width="60px">
+                <el-input :disabled="true" prefix-icon="el-icon-user" v-model="formData.username"/>
+            </el-form-item>
+            <el-form-item prop="pwd" label="密码" label-width="60px">
+                <el-input placeholder="新密码为6位纯数字" prefix-icon="el-icon-more" v-model="formData.pwd"/>
+            </el-form-item>
+            <el-form-item label="" label-width="60px">
+                <el-button type="primary" icon="el-icon-check" @click="editPwdOk">确定</el-button>
+                <el-button type="danger" icon="el-icon-close" @click="resetForm">取消</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+<script type="text/javascript" src="/resources/js/account/editPwd.js"></script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>账号信息列表</title>
+    <link rel="stylesheet" href="/resources/element-ui/lib/theme-chalk/index.css">
+    <script type="text/javascript" src="/resources/js/vue.js"></script>
+    <script type="text/javascript" src="/resources/element-ui/lib/index.js"></script>
+    <script type="text/javascript" src="/resources/js/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <!--顶部工具栏：添加  只有超级管理员可以添加-->
+    <el-row v-show="isRoot">
+        <el-col :span="4">
+            <el-button type="success" icon="el-icon-plus" round size="small"
+                       @click="openAddAccountWin">添加</el-button>
+        </el-col>
+    </el-row>
+    <!--工具栏与数据表格之间间隙-->
+    <div style="margin: 10px"></div>
+    <!--数据表格-->
+    <el-table :data="accountDataArray" border>
+        <el-table-column label="序号"  align="center" type="index"></el-table-column>
+        <el-table-column label="主键"  align="center" prop="id"></el-table-column>
+        <el-table-column label="账号"  align="center" prop="username"></el-table-column>
+        <el-table-column label="头像"  align="center" prop="imgUrl">
+            <template slot-scope="scope">
+                <!--el-popover:控制显示隐藏-->
+                <!--trigger:该属性用于设置何时触发 opovepr-->
+                <el-popover placement="right" title="查看大图" trigger="click">
+                    <!--触发 popover的元素，有两种写法：使用 slot="reference" 的具名插槽，或使用自定义指令v-popover指向 Popover的索引ref-->
+                    <!--<el-popover ref="popover"></el-popover><el-button v-popover:popover>激活</el-button>-->
+                    <!--.concat():该方法用于将指定的字符串参数连接到字符串上-->
+                    <!--cursor:pointer 光标呈现为指示链接的指针（一只手）-->
+                    <el-image slot="reference" :src="'/download/downloadImg.do?imgUrl='.concat(scope.row.imgUrl)"
+                              style="width: 50px;height: 50px;cursor:pointer"></el-image>
+                    <el-image :src="'/download/downloadImg.do?imgUrl='.concat(scope.row.imgUrl)"
+                              style="width: 250px;height: 250px"></el-image>
+                </el-popover>
+            </template>
+        </el-table-column>
+        <el-table-column label="创建时间" align="center" prop="createTime"></el-table-column>
+        <el-table-column label="修改时间"  align="center" prop="updateTime"
+                         :formatter="updateTimeFmt"></el-table-column>
+        <el-table-column label="状态"  align="center" prop="status" :formatter="statusFmt"></el-table-column>
+        <el-table-column label="操作" width="350" align="center" v-if="isRoot">
+            <template slot-scope="scope">
+                <el-form :inline="true" size="small">
+                    <el-form-item>
+                        <!--:disabled 动态控制是否禁用-->
+                        <!--scope.row.role==1?true 当角色是admin超级管理员时，disabled=true,即禁用删除按钮-->
+                        <el-button :disabled="scope.row.role==1?true:false" type="danger" icon="el-icon-delete"
+                                   @click="delOneAccount(scope.row)">删除</el-button>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button  type="danger" icon="el-icon-refresh" @click="resetAccountPwd(scope.row)">
+                            重置密码</el-button>
+                    </el-form-item>
+                    <el-form-item>
+                        <!--el-switch 开关-->
+                        <!--scope.row.role==1?true 当角色为admin超级管理员时，将启用和禁用按钮设置为禁用的状态-->
+                        <!--1代表启用  0代表禁用-->
+                        <el-switch :active-value="1" :inactive-value="0" :disabled="scope.row.role==1?true:false"
+                                   @change="switchChange(scope.row)" v-model="scope.row.status" active-text="启用"
+                                   inactive-text="禁用"></el-switch>
+                    </el-form-item>
+                </el-form>
+            </template>
+        </el-table-column>
+    </el-table>
+    <!--分页-->
+    <el-pagination
+            @current-change="currentChange"
+            @size-change="sizeChange"
+            :current-page="pageNum"
+            :total="total"
+            :page-size="pageSize"
+            :page-sizes="pageSizes"
+            background
+            layout="total,sizes,prev,pager,next,jumper"></el-pagination>
+    <!--添加账号窗口-->
+    <el-dialog title="添加账号" :visible.sync="addAccountWinOpenStatus"  @close="addAccountWinClose">
+        <el-form ref="addAccountWinRef" :model="addAccountFormData" :rules="addAccountFormRules">
+            <el-form-item prop="username">
+                <el-input v-model="addAccountFormData.username" prefix-icon="el-icon-user"
+                          placeholder="请输入账号名称"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" icon="el-icon-check" @click="addAccountOk">确定</el-button>
+                <el-button type="danger" icon="el-icon-close" @click="resetAddAccountWin">取消</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+</div>
+<!--引入自定义js-->
+<script type="text/javascript" src="/resources/js/account/getAccounts.js"></script>
+</body>
+</html>
