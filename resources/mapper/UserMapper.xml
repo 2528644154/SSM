@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.powernode.mapper.UserMapper">
+    <!--添加客户信息-->
+    <insert id="insert" parameterType="com.powernode.dto.UserDto">
+        insert into user(username,birthday,sex,tel,sal,profession,address,remark,dept_id)
+        values(#{username,jdbcType=VARCHAR},#{birthday,jdbcType=TIMESTAMP},#{sex,jdbcType=VARCHAR},
+               #{tel,jdbcType=VARCHAR},#{sal,jdbcType=DOUBLE},#{profession,jdbcType=VARCHAR},
+               #{address,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{deptId,jdbcType=BIGINT})
+    </insert>
+
+    <!--动态搜索客户信息-->
+    <select id="selectUsersBySearch" parameterType="com.powernode.dto.UserSearchDto"
+        resultType="com.powernode.domain.User">
+        <!--查询的是全部数据，相当于检索的所有条件都不成立时，直接点击搜索按钮后查询出全部数据-->
+        select u.*,d.name,d.loc,u.dept_id as deptId from user u inner join dept d on u.dept_id = d.id
+        <!--指定搜索的条件，即使下面的条件不成立，上面的sql语句也能正常的运行-->
+        <where>
+            <if test="username != null and username != ''">
+                u.username = #{username}
+            </if>
+            <if test="tel != null and tel != ''">
+                and u.tel = #{tel}
+            </if>
+            <if test="deptName != null and deptName != ''">
+                and d.name = #{deptName}
+            </if>
+            <if test="sex != null and sex != ''">
+                and u.sex = #{sex}
+            </if>
+        </where>
+    </select>
+
+    <!--编辑客户信息-->
+    <update id="updateUser" parameterType="com.powernode.dto.UserDto">
+        update user set
+        username = #{username},
+        birthday = #{birthday,jdbcType=TIMESTAMP},
+        sex = #{sex,jdbcType=VARCHAR},
+        tel = #{tel,jdbcType=VARCHAR},
+        sal = #{sal,jdbcType=FLOAT},
+        profession = #{profession,jdbcType=VARCHAR},
+        address = #{address,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
+        dept_id = #{deptId,jdbcType=BIGINT}
+        where
+        id = #{id}
+    </update>
+</mapper>
